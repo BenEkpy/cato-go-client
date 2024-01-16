@@ -72,11 +72,6 @@ func (c *httpClient) post(reqBody graphQLRequest, respBody *validResponse) error
 
 	} else {
 
-		// test to remove & improve error handling
-		json.Unmarshal(byteRespBody, respBody)
-		test, _ := json.Marshal(respBody)
-		fmt.Println(string(test))
-
 		return fmt.Errorf("unknown error")
 
 	}
