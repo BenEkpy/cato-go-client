@@ -44,9 +44,6 @@ func (c *httpClient) post(reqBody graphQLRequest, respBody *validResponse) error
 		return err
 	}
 
-	// logs
-	fmt.Println(string(jsonReqBody))
-
 	req, err := http.NewRequest("POST", c.baseurl, bytes.NewBuffer(jsonReqBody))
 	if err != nil {
 		return err
