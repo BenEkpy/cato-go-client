@@ -1,13 +1,45 @@
 package catogo
 
+import (
+	"encoding/json"
+)
+
+type AdminsQuery struct {
+	Admins struct {
+		Items []Admin `json:"items,omitempty"`
+		Total int `json:"total,omitempty"`
+	} `json:"admins,omitempty"`
+}
+
+type AdminQuery struct {
+	Admin Admin `json:"admin,omitempty"`
+}
+
+type AdminMutation struct {
+	Admin struct {
+		AddAdmin struct {
+			AdminID string `json:"adminID,omitempty"`
+		} `json:"addAdmin,omitempty"`
+	} `json:"admin,omitempty"`
+}
+
 type Admin struct {
 	ID                   string   `json:"id,omitempty"`
 	FirstName            string   `json:"firstName,omitempty"`
 	LastName             string   `json:"lastName,omitempty"`
 	Email                string   `json:"email,omitempty"`
 	CreationDate         string   `json:"creationDate,omitempty"`
-	PasswordNeverExpires bool     `json:"passwordNeverExpires,omitempty"`
-	MfaEnabled           bool     `json:"mfaEnabled,omitempty"`
+	PasswordNeverExpires bool     `json:"passwordNeverExpires"`
+	MfaEnabled           bool     `json:"mfaEnabled"`
+	ManagedRoles         []Roles `json:"managedRoles,omitempty"`
+	ResellerRoles        []Roles `json:"resellerRoles,omitempty"`
+}
+
+type AdminUpdate struct {
+	FirstName            string   `json:"firstName,omitempty"`
+	LastName             string   `json:"lastName,omitempty"`
+	PasswordNeverExpires bool     `json:"passwordNeverExpires"`
+	MfaEnabled           bool     `json:"mfaEnabled"`
 	ManagedRoles         []Roles `json:"managedRoles,omitempty"`
 	ResellerRoles        []Roles `json:"resellerRoles,omitempty"`
 }
@@ -21,18 +53,17 @@ type Role struct {
 	Name string `json:"name"`
 }
 
-func (c *httpClient) GetAdmins(accountID string) (interface{}, error) {
+func (c *Client) GetAdmins(accountID string) (*AdminsQuery, error) {
 	query := graphQLRequest{
 		Query: `query admins($accountID:ID!) {
 			admins(accountID:$accountID) {
 				items {
 				  id
+				  lastName
+				  firstName
 				  email
-				  managedRoles {
-					role {
-					  name
-					}
-				  }
+				  passwordNeverExpires
+				  mfaEnabled
 				}
 				total
 			}
@@ -48,10 +79,17 @@ func (c *httpClient) GetAdmins(accountID string) (interface{}, error) {
 		return nil, err
 	}
 
-	return output, nil
+	jsonData, err := json.Marshal(output.Data)
+	if err != nil {
+		return nil, err
+	}
+	admins := AdminsQuery{}
+	json.Unmarshal(jsonData, &admins)
+	return &admins, nil
+
 }
 
-func (c *httpClient) GetAdmin(accountID string, adminID string) (interface{}, error) {
+func (c *Client) GetAdmin(accountID string, adminID string) (*AdminQuery, error) {
 	query := graphQLRequest{
 		Query: `query admin($accountId: ID!, $adminID: ID!) {
 			admin(accountId:$accountId, adminID:$adminID) {
@@ -85,10 +123,17 @@ func (c *httpClient) GetAdmin(accountID string, adminID string) (interface{}, er
 		return nil, err
 	}
 
-	return output, nil
+	jsonData, err := json.Marshal(output.Data)
+	if err != nil {
+		return nil, err
+	}
+	admin := AdminQuery{}
+	json.Unmarshal(jsonData, &admin)
+
+	return &admin, nil
 }
 
-func (c *httpClient) AddAdmin(accountID string, input *Admin) (interface{}, error) {
+func (c *Client) AddAdmin(accountID string, input *Admin) (*AdminMutation, error) {
 
 	query := graphQLRequest{
 		Query: `mutation addAdmin($accountId: ID!, $input: AddAdminInput!) {
@@ -110,11 +155,22 @@ func (c *httpClient) AddAdmin(accountID string, input *Admin) (interface{}, erro
 		return nil, err
 	}
 
-	return output, nil
+	jsonData, err := json.Marshal(output.Data)
+	if err != nil {
+		return nil, err
+	}
+	admin := AdminMutation{}
+	json.Unmarshal(jsonData, &admin)
+
+	return &admin, nil
 
 }
 
-func (c *httpClient) UpdateAdmin(accountID string, adminID string, input *Admin) (interface{}, error) {
+func (c *Client) UpdateAdmin(accountID string, adminID string, input *AdminUpdate) (interface{}, error) {
+
+	// if _, ok := input["Email"]; ok {
+	// 	delete(input, "Email")
+	// }
 
 	query := graphQLRequest{
 		Query: `mutation updateAdmin($accountId:ID!, $adminID:ID!, $input: UpdateAdminInput!) {
@@ -141,7 +197,7 @@ func (c *httpClient) UpdateAdmin(accountID string, adminID string, input *Admin)
 
 }
 
-func (c *httpClient) RemoveAdmin(accountID string, adminID string) (interface{}, error) {
+func (c *Client) RemoveAdmin(accountID string, adminID string) (interface{}, error) {
 
 	query := graphQLRequest{
 		Query: `mutation removeAdmin($accountId: ID!, $adminID: ID!) {

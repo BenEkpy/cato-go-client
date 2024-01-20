@@ -14,7 +14,7 @@ type SiteLocation struct {
 	Timezone    string `json:"timezone"`
 }
 
-func (c *httpClient) AddSocketSite(accountID string, input *SocketSite) (interface{}, error) {
+func (c *Client) AddSocketSite(accountID string, input *SocketSite) (interface{}, error) {
 
 	query := graphQLRequest{
 		Query: `mutation addSocketSite ($accountId: ID!, $input: AddSocketSiteInput!) {

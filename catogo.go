@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-type httpClient struct {
+type Client struct {
 	httpclient *http.Client
 	token      string
 	baseurl    string
@@ -25,19 +25,19 @@ type validResponse struct {
 	Errors []interface{} `json:"errors,omitempty"`
 }
 
-func APIClient(token string) *httpClient {
+func APIClient(token string) *Client {
 	client := &http.Client{
 		Timeout: 60 * time.Second,
 	}
 
-	return &httpClient{
+	return &Client{
 		httpclient: client,
 		baseurl:    "https://api.catonetworks.com/api/v1/graphql2",
 		token:      token,
 	}
 }
 
-func (c *httpClient) post(reqBody graphQLRequest, respBody *validResponse) error {
+func (c *Client) post(reqBody graphQLRequest, respBody *validResponse) error {
 
 	jsonReqBody, err := json.Marshal(reqBody)
 	if err != nil {

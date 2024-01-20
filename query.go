@@ -1,6 +1,6 @@
 package catogo
 
-func (c *httpClient) GetEntities(accountID string, entityType string) (interface{}, error) {
+func (c *Client) GetEntities(accountID string, entityType string) (interface{}, error) {
 
 	query := graphQLRequest{
 		Query: `query entityLookup ($accountID: ID!, $type: EntityType!) {
@@ -33,7 +33,7 @@ func (c *httpClient) GetEntities(accountID string, entityType string) (interface
 
 }
 
-func (c *httpClient) GetEntityByID(accountID string, entityType string, entityIDs string) (interface{}, error) {
+func (c *Client) GetEntityByID(accountID string, entityType string, entityIDs string) (interface{}, error) {
 
 	query := graphQLRequest{
 		Query: `query entityLookup ($accountID: ID!, $type: EntityType!, $entityIDs: [ID!]) {
