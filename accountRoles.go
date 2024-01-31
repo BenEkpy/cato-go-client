@@ -8,18 +8,18 @@ type AccountRolesQuery struct {
 	AccountRoles struct {
 		Items []AccountRole `json:"items,omitempty"`
 		Total int `json:"total,omitempty"`
-	} `json:"admins,omitempty"`
+	} `json:"accountRoles,omitempty"`
 }
 
 type AccountRole struct {
 	ID                   string   `json:"id,omitempty"`
 	Name            string   `json:"name,omitempty"`
 	Description             string   `json:"description,omitempty"`
-	IsPredifnied                string   `json:"isPredefined"`
+	IsPredefined                string   `json:"isPredefined"`
 }
 
 
-func (c *Client) GetAccountRoles(accountID string, accountType string) (*AdminsQuery, error) {
+func (c *Client) GetAccountRoles(accountID string, accountType string) (*AccountRolesQuery, error) {
 	query := graphQLRequest{
 		Query: `query accountRoles ($accountID: ID!, $accountType: AccountType!) {
 			accountRoles (accountID: $accountID, accountType: $accountType) {
