@@ -1,6 +1,6 @@
 package catogo
 
-type SocketSite struct {
+type SSocketSite struct {
 	Name               string       `json:"name"`
 	Description        string       `json:"description"`
 	SiteType           string       `json:"siteType"`
@@ -9,12 +9,12 @@ type SocketSite struct {
 	SiteLocation       SiteLocation `json:"siteLocation"`
 }
 
-type SiteLocation struct {
+type SSiteLocation struct {
 	CountryCode string `json:"countryCode"`
 	Timezone    string `json:"timezone"`
 }
 
-func (c *Client) AddSocketSite(accountID string, input *SocketSite) (interface{}, error) {
+func (c *Client) AAddSocketSite(accountID string, input *SocketSite) (interface{}, error) {
 
 	query := graphQLRequest{
 		Query: `mutation addSocketSite ($accountId: ID!, $input: AddSocketSiteInput!) {
