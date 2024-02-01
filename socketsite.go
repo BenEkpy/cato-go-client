@@ -32,17 +32,19 @@ type SiteMutation struct {
 
 
 type SocketSite struct {
-	Name               string       `json:"name"`
-	Description        string       `json:"description"`
-	SiteType           string       `json:"siteType"`
-	NativeNetworkRange string       `json:"nativeNetworkRange"`
-	ConnectionType     string       `json:"connectionType"`
-	SiteLocation       SiteLocation `json:"siteLocation"`
+	ID                   string   `json:"id,omitempty"`
+	Name               string       `json:"name,omitempty"`
+	Serial				string		`json:"serial,omitempty"`
+	Description        string       `json:"description,omitempty"`
+	SiteType           string       `json:"siteType,omitempty"`
+	NativeNetworkRange string       `json:"nativeNetworkRange,omitempty"`
+	ConnectionType     string       `json:"connectionType,omitempty"`
+	SiteLocation       SiteLocation `json:"siteLocation,omitempty"`
 }
 
 type SiteLocation struct {
-	CountryCode string `json:"countryCode"`
-	Timezone    string `json:"timezone"`
+	CountryCode string `json:"countryCode,omitempty"`
+	Timezone    string `json:"timezone,omitempty"`
 }
 
 
